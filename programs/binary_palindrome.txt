@@ -8,13 +8,8 @@
 # MOVEMENT: 'r' move right, 'l' move left, '*' do not move
 # NEW STATE: '*' do not change state
 #
-# state example:
-#
-# 0 # state name
-# <read_symbol> <write_symbol> <direction> <new_state>
-# <read_symbol> <write_symbol> <direction> <new_state>
-# <read_symbol> <write_symbol> <direction> <new_state>
-# % # end of state
+# instruction example:
+# <current_state> <input> <write_symbol> <move_direction> <new_state>
 #
 # state primitives
 # 'halt-accept': halts processing, input accepted
@@ -26,46 +21,49 @@
 # i.e. '10101' is a palidrome, '11010' is not
 #
 # ================= BEGIN PROGRAM =================
-#
-start
-0 _ r 1o
-1 _ r 1i
-_ _ * accept
-%
-1o
-_ _ l 2o
-* * r 1o
-%
-1i
-_ _ l 2i
-* * r 1i
-%
-2o
- _ l 3
-_ _ * accept
-* * * reject
-%
-2i
-1 _ l 3
-_ _ * accept
-* * * reject
-%
-3
-_ _ * accept
-* * l 4
-* * l 4
-_ _ r 0
-%
-accept
-* : r accept2
-%
-accept2
-* ) * halt-accept
-%
-reject
-_ : r reject2
-* _ l reject
-%
-reject2
-* ( * halt-reject
-%
+
+start 0 _ r 1o
+start 1 _ r 1i
+start _ _ * accept
+
+# state 0: 
+0 0 _ r 1o
+0 1 _ r 1i
+0 _ _ * acceptc
+
+# state 1o: 
+1o _ _ l 2o
+1o * * r 1o
+
+# state li: 
+1i _ _ l 2i
+1i * * r 1i
+
+# state 2o: 
+2o 0 _ l 3
+2o _ _ * accept
+2o * * * reject
+
+# state 2i: 
+2i 1 _ l 3
+2i _ _ * accept
+2i * * * reject
+
+# state 3: 
+3 _ _ * accept
+3 * * l 4
+3 * * l 4
+3 _ _ r 0
+
+# state 4: 
+4 * * l 4
+4 _ _ r 0
+
+# accept states
+accept * : r accept2
+accept2 * ) * halt-accept
+
+# reject states
+reject _ : r reject2
+reject * _ l reject
+reject2 * ( * halt-reject
