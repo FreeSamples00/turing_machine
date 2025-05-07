@@ -1,14 +1,19 @@
-from time import sleep
-from random import randint
 from sys import argv
+from TuringMachine import TuringMachine
+
 if __name__ == '__main__':
-    from TuringMachine import TuringMachine
+    
+    # TODO: choose from programs
+
     tm = TuringMachine("./programs/binary_palindrome.txt")
 
-    tape = "101001"
+    try:
+        tape = argv[1]
+    except:
+        tape = "_"
 
     tm.load_tape(tape)
 
-    output = tm.execute_program()
+    tm.execute_program()
 
-    print(output)
+    print(tm.get_result())
