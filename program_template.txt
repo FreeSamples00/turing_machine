@@ -1,0 +1,71 @@
+# ==================== README ====================
+#
+# '#' indicate comments
+# '%' indicates end of state
+#
+# READ SYMBOL: '_' indicates a blank, '*' indicates a wild card
+# WRITE SYMBOL: '_' indicates a deletetion, '*' indicates no change
+# MOVEMENT: 'r' move right, 'l' move left, '*' do not move
+# NEW STATE: '*' do not change state
+#
+# state example:
+#
+# 0 # state name
+# <read_symbol> <write_symbol> <direction> <new_state>
+# <read_symbol> <write_symbol> <direction> <new_state>
+# <read_symbol> <write_symbol> <direction> <new_state>
+# % # end of state
+#
+# state primitives
+# 'halt-accept': halts processing, input accepted
+# 'halt-reject': halts processing, input rejected
+# 'start': machine is initialized with this state, must define how to start program
+# ============== PROGRAM DESCRIPTION ==============
+# 
+# This program takes inputs of binary strings and determines if they are a palindrome.
+# i.e. '10101' is a palidrome, '11010' is not
+#
+# ================= BEGIN PROGRAM =================
+#
+start
+0 _ r 1o
+1 _ r 1i
+_ _ * accept
+%
+1o
+_ _ l 2o
+* * r 1o
+%
+1i
+_ _ l 2i
+* * r 1i
+%
+2o
+ _ l 3
+_ _ * accept
+* * * reject
+%
+2i
+1 _ l 3
+_ _ * accept
+* * * reject
+%
+3
+_ _ * accept
+* * l 4
+* * l 4
+_ _ r 0
+%
+accept
+* : r accept2
+%
+accept2
+* ) * halt-accept
+%
+reject
+_ : r reject2
+* _ l reject
+%
+reject2
+* ( * halt-reject
+%
