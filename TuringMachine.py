@@ -21,7 +21,7 @@ class TuringMachine:
 
     # built-in symbols and states
     _BLANK = "_"
-    _HALTS = ('halt-accept', 'halt-reject')
+    _HALTS = ('halt-accept', 'halt-reject', 'halt')
     _START = 'start'
     _WILDCARD = '*'
 
@@ -95,6 +95,9 @@ class TuringMachine:
             offset = 9
         elif self.state == 'halt-reject':
             state_str = state_str[:6] + " \033[91mREJECTED\033[0m"
+            offset = 9
+        elif self.state == 'halt':
+            state_str = state_str[:6] + " \033[93mCOMPLETE\033[0m"
             offset = 9
 
         # create head icons and info
@@ -258,7 +261,10 @@ class TuringMachine:
             for sym in input:
                 if len(sym) != 1:
                     raise ValueError(f"'{sym}' is not a valid symbol")
-                self.tape.append(sym)
+                if sym == ' ':
+                    self.tape.append(self._BLANK)
+                else:
+                    self.tape.append(sym)
 
         elif type(input) is list:
             self.tape.append(self._BLANK)
@@ -286,6 +292,7 @@ class TuringMachine:
         self._write(inst.write_symbol)
         self._move(inst.move_direction)
 
+        # if halt state reached change status
         if self.state in self._HALTS:
             self.complete = True
         
@@ -325,7 +332,6 @@ class TuringMachine:
         else:
             return False, tape
         
-    # TODO: test this
     def reset(self, hard: bool=False) -> None:
         """Reset machine for another execution
         Args:
