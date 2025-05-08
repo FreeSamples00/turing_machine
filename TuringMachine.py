@@ -143,9 +143,7 @@ class TuringMachine:
             
     def _read(self) -> str:
         """Read head-pointed cell"""
-        # TODO: throw a more graceful error when reading invalid symbol
         assert 0 <= self.head < len(self.tape), f"Head: {self.head} outside of tape"
-        assert self.tape[self.head] in self._alphabet, f"Symbol {self.tape[self.head]} not in machine alphabet"
         return str(self.tape[self.head])
     
     def _write(self, symbol: str) -> None:
@@ -180,7 +178,8 @@ class TuringMachine:
             if key in self.instruction_set:
                 return self.instruction_set[key]
             
-        raise ValueError(f"[{state}, {input}] not in instruction set")
+        print(f"\033[91mERROR: state: '{state}', input: '{input}' not found in program.\033[0m")
+        exit()
     
     # ========================== PUBLIC METHODS ==========================
     
@@ -256,22 +255,25 @@ class TuringMachine:
         assert self.tape is None, "Cannot reload tape without first resetting"
         self.tape = []
 
+        # load string into tape
         if type(input) is str:
             input = "_" + input + "_"
             for sym in input:
-                if len(sym) != 1:
-                    raise ValueError(f"'{sym}' is not a valid symbol")
-                if sym == ' ':
+                assert len(sym) == 1, f"'{sym}' is not a valid symbol"
+                if sym == ' ': # translate whitespace
                     self.tape.append(self._BLANK)
                 else:
                     self.tape.append(sym)
 
+        # load list into tape
         elif type(input) is list:
             self.tape.append(self._BLANK)
             for sym in input:
-                if len(str(sym)) != 1:
-                    raise ValueError(f"'{sym}' is not a valid symbol")
-                self.tape.append(str(sym))
+                assert len(sym) == 1, f"'{sym}' is not a valid symbol"
+                if sym == ' ': # translate whitespace
+                    self.tape.append(self._BLANK)
+                else:
+                    self.tape.append(str(sym))
             self.tape.append(self._BLANK)
         else:
             raise TypeError(f"input type '{type(input)}' is invalid")
@@ -301,16 +303,19 @@ class TuringMachine:
         if display:
             print(self)
 
-    def execute_program(self, speed: float=0.15):
+    def execute_program(self, speed: float=0.15, display: bool=True):
         """Execute instruction cycles until reaching a HALT state.
         Args:
             speed (float): time delay between cycles in seconds (default is 0.15)
+            display (bool): whether or not to display turing machine while running (default is True)
         """
+        if display:
+            print(self)
 
         # while not halted, execute cycles on delay
         while not self.complete:
             sleep(speed)
-            self.cycle()
+            self.cycle(display=display)
     
     def get_result(self) -> tuple[bool, list[str]]:
         """Get result from machine.
@@ -319,6 +324,7 @@ class TuringMachine:
         """
         assert self.complete, f"get_result() called while machine is not complete"
 
+        # convert tape to string
         tape = ""
         for sym in self.tape:
             if sym == '_':
@@ -327,22 +333,28 @@ class TuringMachine:
                 tape += sym
         tape = tape.strip()
 
+        # return state of machine
         if self.state == 'halt-accept':
             return True, tape
-        else:
+        elif self.state == 'halt-reject':
             return False, tape
+        else:
+            return None, tape
         
     def reset(self, hard: bool=False) -> None:
         """Reset machine for another execution
         Args:
             hard (bool): if true also clears instruction set (defaults to false)
         """
+
+        # reset operating variables
         self.head = 1
         self.complete = False
         self.tape = None
         self._cycle_count = 0
         self.state = self._START
 
+        # if specified, fully reset machine
         if hard:
             self.instruction_set = None
             self._alphabet = {'*', '_'}
@@ -351,4 +363,3 @@ class TuringMachine:
 
 # TODO: write more programs
 # TODO: create README
-# TODO: create git repo

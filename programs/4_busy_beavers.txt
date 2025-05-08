@@ -19,48 +19,26 @@
 #
 # ============== PROGRAM DESCRIPTION ==============
 # 
-#  This program converts binary numbers to decimal.
+#  4-state busy beaver
+#  When run with blank input, prints a number of 1's then halts.
+#  See, eg, http://en.wikipedia.org/wiki/Busy_beaver for background on the busy beaver problem.
 #
 #  Program was found here: https://morphett.info/turing/turing.html
 #
 # ===================== SYNTAX ====================
 #
-#  '<binary_number>' -> '<decimal_number>'
+#  '' -> '<beavers>'
 #
 # ================= BEGIN PROGRAM =================
 
 # starting state
-start * * * 1
+start * * * a
 
-1 _ _ r 1
-1 * * r 1a
-1a * * r 1a
-1a _ _ l 2   # found the end of the input
-1b _ _ r 1   # (used later) skip the output, go to end of input
-1b * * r 1b
-2 1 0 l 3    # decrement input
-2 0 1 l 2    # decrement & carry
-2 _ _ r 20   # finished. clean up
-3 * * l 3    # find start of output
-3 _ _ l 4    # found end of input
-4 0 1 r 1b   # increment the output
-4 1 2 r 1b
-4 2 3 r 1b
-4 3 4 r 1b
-4 4 5 r 1b
-4 5 6 r 1b
-4 6 7 r 1b
-4 7 8 r 1b
-4 8 9 r 1b
-4 9 0 l 4  # increment & carry
-4 _ 1 r 1b  # start new column
-
-# clean up
-20 _ _ l 21  # return to end of output
-20 * _ r 20  # erase input
-21 _ _ l 21
-21 * * l 21a
-21a * * l 21a
-21a _ _ r halt
-
-
+a _ 1 r b
+a 1 1 l b
+b _ 1 l a
+b 1 _ l c
+c _ 1 r halt
+c 1 1 l d
+d _ 1 r d
+d 1 _ r a

@@ -16,6 +16,7 @@
 #  'halt-reject': halts processing, input rejected
 #  'halt': halts processing
 #  'start': machine is initialized with this state, must define how to start program
+#
 # ============== PROGRAM DESCRIPTION ==============
 # 
 #  This program takes inputs of binary strings and determines if they are a palindrome.
@@ -23,9 +24,9 @@
 # 
 #  Program was found here: https://morphett.info/turing/turing.html
 #
-# ===================== INPUT =====================
+# ===================== SYNTAX ====================
 #
-#  '<binary_number>'
+#  '<binary_number>' -> '<bool_output>'
 #
 # ================= BEGIN PROGRAM =================
 

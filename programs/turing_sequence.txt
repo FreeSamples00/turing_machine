@@ -19,48 +19,52 @@
 #
 # ============== PROGRAM DESCRIPTION ==============
 # 
-#  This program converts binary numbers to decimal.
+#  This is a translation of a program given by Alan Turing in his 1936
+#  paper 'On computable numbers, with an application to the Entscheidungsproblem'
+#
+#  The program writes the digits of the sequence 0010110111011110... in the even cells of the tape.
+#  Run it with a blank initial tape.
+#  NOTE: This program does not halt.
 #
 #  Program was found here: https://morphett.info/turing/turing.html
 #
 # ===================== SYNTAX ====================
 #
-#  '<binary_number>' -> '<decimal_number>'
+#  '' -> '<sequence>'
 #
 # ================= BEGIN PROGRAM =================
 
 # starting state
-start * * * 1
+start * * * b0
 
-1 _ _ r 1
-1 * * r 1a
-1a * * r 1a
-1a _ _ l 2   # found the end of the input
-1b _ _ r 1   # (used later) skip the output, go to end of input
-1b * * r 1b
-2 1 0 l 3    # decrement input
-2 0 1 l 2    # decrement & carry
-2 _ _ r 20   # finished. clean up
-3 * * l 3    # find start of output
-3 _ _ l 4    # found end of input
-4 0 1 r 1b   # increment the output
-4 1 2 r 1b
-4 2 3 r 1b
-4 3 4 r 1b
-4 4 5 r 1b
-4 5 6 r 1b
-4 6 7 r 1b
-4 7 8 r 1b
-4 8 9 r 1b
-4 9 0 l 4  # increment & carry
-4 _ 1 r 1b  # start new column
+# Turing's state 'b'
+b0 * e r b1
+b1 * e r b2
+b2 * 0 r b3
+b3 * * r b4
+b4 * 0 l b5
+b5 * * l o0
 
-# clean up
-20 _ _ l 21  # return to end of output
-20 * _ r 20  # erase input
-21 _ _ l 21
-21 * * l 21a
-21a * * l 21a
-21a _ _ r halt
+# Turing's state 'o'
+o0 1 * r o1
+o1 * x l o2
+o2 * * l o3
+o3 * * l o0
+o0 0 0 * q0
 
+# Turing's state 'q'
+q0 _ 1 l p0
+q0 * * r q1
+q1 * * r q0
 
+# Turing's state 'p'
+p0 x _ r q0
+p0 e * r f0
+p0 _ * l p1
+p1 * * l p0
+
+# Turing's state 'f'
+f0 _ 0 l f1
+f1 * * l o0
+f0 * * r f2
+f2 * * r f0

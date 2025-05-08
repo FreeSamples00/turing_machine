@@ -16,15 +16,16 @@
 #  'halt-reject': halts processing, input rejected
 #  'halt': halts processing
 #  'start': machine is initialized with this state, must define how to start program
+#
 # ============== PROGRAM DESCRIPTION ==============
 # 
+#  Multiplies two binary numbers.
 #
+#  Program was found here: https://morphett.info/turing/turing.html
 #
+# ===================== SYNTAX ====================
 #
-#
-# ===================== INPUT =====================
-#
-#  
+#  '<binary_1> <binary_2>' -> '<binary_product>'
 #
 # ================= BEGIN PROGRAM =================
 

@@ -16,13 +16,14 @@
 #  'halt-reject': halts processing, input rejected
 #  'halt': halts processing
 #  'start': machine is initialized with this state, must define how to start program
+#
 # ============== PROGRAM DESCRIPTION ==============
 # 
 #
 #
 #
 #
-# ===================== INPUT =====================
+# ===================== SYNTAX ====================
 #
 #  
 #
