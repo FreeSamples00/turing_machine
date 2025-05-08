@@ -360,6 +360,4 @@ class TuringMachine:
             self._alphabet = {'*', '_'}
             self._states = {'start', 'halt-accept', 'halt-reject'}
         
-
-# TODO: write more programs
 # TODO: create README

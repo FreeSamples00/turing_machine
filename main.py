@@ -9,6 +9,8 @@ if __name__ == '__main__':
     DISPLAY = True
     TURBO = False
 
+    # TODO: accept turbo mode from CLI?
+
     print("\033c", end="") # clear terminal
 
     # find programs files
