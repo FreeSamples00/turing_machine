@@ -309,12 +309,15 @@ class TuringMachine:
             speed (float): time delay between cycles in seconds (default is 0.15)
             display (bool): whether or not to display turing machine while running (default is True)
         """
+
+        do_sleep = bool(sleep)
+
         if display:
             print(self)
 
         # while not halted, execute cycles on delay
         while not self.complete:
-            sleep(speed)
+            if do_sleep: sleep(speed)
             self.cycle(display=display)
     
     def get_result(self) -> tuple[bool, list[str]]:

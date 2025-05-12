@@ -14,10 +14,13 @@ The `main.py` file contains a CLI for the machine. Argument options are as follo
 
 - `-h`: displays help message, does not run anything
 
+- `-l`: list programs in the `./programs` directory
+
 - `-p`: the location of a program to load (also accepts the name or number of a program stored in the `./programs` directory)
 - `-t`: the tape to process (passed as a string of symbols)
 - `-s`: the speed the machine should run at, i.e. how many seconds to wait between instructions (accepts any positive float)
 - `--turbo`: enables turbo mode, where speed is uncapped and the display is disabled (helpful for complex programs)
+- `--no-display`: disables visualization during processing, still prints once in the final state
 
 If either the program or tape is left unspecified, the user will be prompted for them. The default speed is 0.15s.
 

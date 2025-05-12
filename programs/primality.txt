@@ -229,7 +229,7 @@ start * * l 1
 508 * i r 509
 509 * m r 510
 510 * e r 511
-511 * ! * halt
+511 * ! * halt-accept
 
 # Not a prime. D'oh.
 600 _ _ l 601
@@ -252,6 +252,6 @@ start * * l 1
 613 * i r 614
 614 * m r 615
 615 * e r 616
-616 * . * halt
+616 * . * halt-reject
 
 

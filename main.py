@@ -21,6 +21,7 @@ if __name__ == '__main__':
     # default settings
     speed = 0.15
     turbo = False
+    display = True
 
     # input flags
     needs_tape = True
@@ -31,7 +32,7 @@ if __name__ == '__main__':
     tape = None
 
     # process flags and inputs
-    flags = ('--turbo', '-p', '-t', '-s')
+    flags = ('--turbo', '-p', '-t', '-s', '--no-display')
     skip = False
     for i in range(len(argv)):
         if not skip:
@@ -48,15 +49,28 @@ if __name__ == '__main__':
 
                 case '-h': # help message
                     print("\nOptions:")
-                    print("-p <string>  \tProgram to load. filepath, ./program name.")
+                    print("-p <string>  \tProgram to load. filepath, name of program in programs directory")
                     print("-t <string>  \tTape to load. string of symbols.")
                     print("-s <float>   \tSpeed. n (float) seconds between instructions.")
                     print("--turbo      \tTurbo mode. Uncapped speed, Does not display.")
+                    print("--no-display \tDisable ASCII visualization.")
+                    print("-l           \tlist programs in programs directory")
                     print("-h           \tThis help message.")
                     exit()
+
+                case '-l':
+                    if exists(PROGRAM_DIR):
+                        for program in listdir(PROGRAM_DIR):
+                            print(f"{program[:-3]}")
+                        exit()
+                    else:
+                        error("'{PROGRAM_DIR}' not found.")
                 
                 case '--turbo': # set turbo to True
                     turbo = True
+
+                case '--no-display': # disable display output
+                    display = False
 
                 case '-p': # specify program (number or filepath)
                     if next_arg is None or next_arg in flags: error("No program specified")
@@ -88,7 +102,7 @@ if __name__ == '__main__':
                         error(f"'{next_arg}' not a positive float")
                     skip = True
 
-                case _:
+                case _: # argument not in options
                     if argv.index(arg) > 0: error(f"'{arg}' not valid")
 
         else:
@@ -112,6 +126,8 @@ if __name__ == '__main__':
     # interactive tape input
     if needs_tape:
         tape = input("\nEnter tape: ")
+        if not display: print("Processing...")
+
 
     # create turing machine
     tm = TuringMachine()
@@ -124,7 +140,8 @@ if __name__ == '__main__':
 
     # execute
     if turbo: # turbo mode
-        tm.execute_program(display=False, speed=0)
-        print(tm)
-    else: # normal mode
-        tm.execute_program(speed=speed)
+        display = False
+        speed = 0
+    
+    tm.execute_program(display=display, speed=speed)
+    if not display: print(tm)
