@@ -1,61 +1,120 @@
 from TuringMachine import TuringMachine
 from os import listdir
+from os.path import exists
 from sys import argv
-from time import sleep
 
 if __name__ == '__main__':
 
-    SPEED = 0.15
-    DISPLAY = True
-    TURBO = False
+    PROGRAM_DIR = "./programs/"
 
-    # TODO: accept turbo mode from CLI?
+    # bad input error
+    def error(msg: str) -> None:
+        print(f"\033[91m{msg}\033[0m")
+        exit()
 
-    print("\033c", end="") # clear terminal
+    # attempt to load program options fomr PROGRAM_DIR
+    try:
+        programs = sorted(listdir(PROGRAM_DIR))
+    except:
+        programs = None
 
-    # find programs files
-    programs = sorted(listdir("./programs/"))
-   
-    # get user input to load program
-    if len(argv) > 1 and argv[1].isdigit():
-        choice = argv[1]
-        print(f"Program: {programs[int(choice)][:-4]}\n")
-    else:
+    # default settings
+    speed = 0.15
+    turbo = False
+
+    # input flags
+    needs_tape = True
+    needs_program = True
+
+    # input variables
+    program = None
+    tape = None
+
+    # process flags and inputs
+    flags = ('--turbo', '-p', '-t', '-s')
+    skip = False
+
+    for i in range(len(argv)):
+        if not skip:
+
+            # set arg and next_arg
+            arg = argv[i]
+            try:
+                next_arg = argv[i+1]
+            except:
+                next_arg = None
+
+            # processing logic
+            match (arg):
+                
+                case '--turbo': # set turbo to True
+                    turbo = True
+
+                case '-p': # specify program (number or filepath)
+                    if next_arg is None or next_arg in flags: error("No program specified")
+                    
+                    try:
+                        program = f"{PROGRAM_DIR}{programs[int(next_arg)]}"
+                    except:
+                        program = f"{PROGRAM_DIR}{next_arg}.txt"
+                        if not exists(program):
+                            program = next_arg
+                            if not exists(program): error(f"'{next_arg}' not found")
+
+                    skip = True
+                    needs_program = False
+                
+                case '-t': # specify tape input 
+                    if next_arg is None or next_arg in flags: error("No tape specified")
+                    tape = next_arg
+                    needs_tape = False
+                    skip = True
+
+                case '-s': # specify the speed
+                    if next_arg is None or next_arg in flags: error("No speed specified")
+                    try:
+                        speed = float(next_arg)
+                    except:
+                        error(f"'{next_arg}' not a float")
+                    skip = True
+
+                case _:
+                    if argv.index(arg) > 0: error(f"'{arg}' not valid")
+
+        else:
+            skip = False
+
+    # interactive program selection
+    if needs_program:
+        if programs is None:
+            error("No program specified")
+
         choice = ""
-        print("======== Choose Program ========\n")
+        print("\n======== Choose Program ========\n")
         for i in range(len(programs)):
             print(f"{i}) {programs[i][:-3]}")
         print()
         while (not choice.isdigit()) or (int(choice) >= len(programs)):
             choice = input("Program: ")
 
-    PROGRAM = "./programs/"+programs[int(choice)]
-    if programs[int(choice)] == 'primality.txt':
-        SPEED = 0.025
+        program = f"{PROGRAM_DIR}{programs[int(choice)]}"
 
-    # init machine and load program
-    tm = TuringMachine(PROGRAM)
+    # interactive tape input
+    if needs_tape:
+        tape = input("\nEnter tape: ")
 
-    # get tape from input
-    if len(argv) > 2:
-        TAPE = argv[2]
-        print(f"Tape: {TAPE}\n")
-    else:
-        TAPE = input("Enter tape: ")
+    # create turing machine
+    tm = TuringMachine()
 
-    if len(argv) > 2:
-        sleep(1)
+    # load program
+    tm.load_program(program)
 
     # load tape
-    tm.load_tape(TAPE)
+    tm.load_tape(tape)
 
-    # turbo mode
-    if TURBO: 
-        SPEED = 0
-        DISPLAY = False
-    
-    # exectute program
-    tm.execute_program(speed=SPEED, display=DISPLAY)
-
-    if TURBO:
+    # execute
+    if turbo: # turbo mode
+        tm.execute_program(display=False, speed=0)
         print(tm)
+    else: # normal mode
+        tm.execute_program(speed=speed)
