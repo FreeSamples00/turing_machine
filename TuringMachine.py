@@ -359,5 +359,3 @@ class TuringMachine:
             self.instruction_set = None
             self._alphabet = {'*', '_'}
             self._states = {'start', 'halt-accept', 'halt-reject'}
-        
-# TODO: create README

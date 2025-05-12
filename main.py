@@ -12,7 +12,7 @@ if __name__ == '__main__':
         print(f"\033[91m{msg}\033[0m")
         exit()
 
-    # attempt to load program options fomr PROGRAM_DIR
+    # attempt to load program options for PROGRAM_DIR
     try:
         programs = sorted(listdir(PROGRAM_DIR))
     except:
@@ -33,7 +33,6 @@ if __name__ == '__main__':
     # process flags and inputs
     flags = ('--turbo', '-p', '-t', '-s')
     skip = False
-
     for i in range(len(argv)):
         if not skip:
 
@@ -46,6 +45,15 @@ if __name__ == '__main__':
 
             # processing logic
             match (arg):
+
+                case '-h': # help message
+                    print("\nOptions:")
+                    print("-p <string>  \tProgram to load. filepath, ./program name.")
+                    print("-t <string>  \tTape to load. string of symbols.")
+                    print("-s <float>   \tSpeed. n (float) seconds between instructions.")
+                    print("--turbo      \tTurbo mode. Uncapped speed, Does not display.")
+                    print("-h           \tThis help message.")
+                    exit()
                 
                 case '--turbo': # set turbo to True
                     turbo = True
@@ -74,6 +82,8 @@ if __name__ == '__main__':
                     if next_arg is None or next_arg in flags: error("No speed specified")
                     try:
                         speed = float(next_arg)
+                        if speed < 0:
+                            error("Speed cannot be negative")
                     except:
                         error(f"'{next_arg}' not a float")
                     skip = True
