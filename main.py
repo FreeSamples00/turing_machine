@@ -83,9 +83,9 @@ if __name__ == '__main__':
                     try:
                         speed = float(next_arg)
                         if speed < 0:
-                            error("Speed cannot be negative")
+                            exit()
                     except:
-                        error(f"'{next_arg}' not a float")
+                        error(f"'{next_arg}' not a positive float")
                     skip = True
 
                 case _:
